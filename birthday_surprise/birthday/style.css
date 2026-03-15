@@ -1,0 +1,822 @@
+/* AJOUTER DANS TON <style> */
+
+#music {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.5s ease;
+}
+
+#music.visible {
+  opacity: 1;
+  visibility: visible;
+}
+/* ============================================
+           IMPORT DES POLICES
+           ============================================ */
+@import url("https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600&display=swap");
+
+/* ============================================
+           RESET ET VARIABLES CSS
+           ============================================ */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  /* Couleurs principales */
+  --bg-pink: #ffc0cb;
+  --bg-pink-dark: #ff91a4;
+  --candle-white: #ffffff;
+  --candle-stripe: rgba(255, 0, 0, 0.4);
+  --flame-yellow: rgba(254, 248, 97, 0.8);
+  --flame-orange: rgba(255, 50, 0, 0.5);
+  --text-red: #e74c3c;
+  --text-gold: #f39c12;
+  --heart-red: #e91e63;
+
+  /* Tailles responsive - MOBILE FIRST */
+  --cake-width: 130px;
+  --candle-top: 233px;
+  --candle-width: 7px;
+  --candle-height: 35px;
+  --flame-width: 6px;
+  --flame-height: 14px;
+  --flame-top: -18px;
+}
+
+/* ============================================
+           BODY ET CONTENEUR PRINCIPAL - MOBILE FIRST
+           ============================================ */
+html,
+body {
+  width: 100%;
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background: linear-gradient(
+    135deg,
+    var(--bg-pink) 0%,
+    var(--bg-pink-dark) 50%,
+    var(--bg-pink) 100%
+  );
+  background-size: 400% 400%;
+  animation: gradientShift 8s ease infinite;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: "Poppins", sans-serif;
+  padding: 10px;
+  touch-action: manipulation;
+}
+
+@keyframes gradientShift {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+  max-width: 100%;
+  width: 100%;
+}
+
+/* ============================================
+           CONTENEUR DES CONFETTIS
+           ============================================ */
+#confetti-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 100;
+}
+
+/* ============================================
+           WRAPPER DU GÂTEAU - MOBILE FIRST
+           ============================================ */
+.cake-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ============================================
+           SVG DU GÂTEAU - MOBILE FIRST (petit écran)
+           ============================================ */
+#cake {
+  display: block;
+  position: relative;
+  margin: 0 auto;
+  width: var(--cake-width);
+  height: auto;
+  filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.2));
+}
+
+/* ============================================
+           BOUGIE - MOBILE FIRST
+           ============================================ */
+.candle {
+  position: absolute;
+  top: var(--candle-top);
+  left: 50%;
+  transform: translateX(-50%) translateY(-200px);
+  width: var(--candle-width);
+  height: var(--candle-height);
+  background: linear-gradient(
+    to right,
+    var(--candle-white) 0%,
+    #f5f5f5 50%,
+    var(--candle-white) 100%
+  );
+  border-radius: 8px;
+  z-index: -1;
+  opacity: 0;
+  backface-visibility: hidden;
+  animation: candleIn 0.6s ease-out 5.5s forwards;
+  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.15);
+}
+
+/* Rayures de la bougie */
+.candle::after,
+.candle::before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  background: var(--candle-stripe);
+  border-radius: 2px;
+}
+
+.candle::after {
+  top: 20%;
+}
+
+.candle::before {
+  top: 50%;
+}
+
+/* Conteneur des flammes */
+.flame-container {
+  position: absolute;
+  top: var(--flame-top);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* ============================================
+           FLAMMES - MOBILE FIRST
+           ============================================ */
+.fire {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: var(--flame-width);
+  height: var(--flame-height);
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  opacity: 0;
+}
+
+.fire:nth-child(1) {
+  animation: fire 2s 6.2s infinite;
+}
+.fire:nth-child(2) {
+  animation: fire 1.5s 6.2s infinite;
+}
+.fire:nth-child(3) {
+  animation: fire 1s 6.2s infinite;
+}
+.fire:nth-child(4) {
+  animation: fire 0.5s 6.2s infinite;
+}
+.fire:nth-child(5) {
+  animation: fire 0.2s 6.2s infinite;
+}
+
+/* ============================================
+           KEYFRAMES - ANIMATIONS
+           ============================================ */
+@keyframes fire {
+  0%,
+  100% {
+    background: var(--flame-yellow);
+    box-shadow:
+      0 0 15px 3px rgba(255, 200, 100, 0.4),
+      0 0 30px 8px rgba(248, 233, 209, 0.3);
+    transform: translateX(-50%) translateY(0) scale(1);
+    opacity: 1;
+  }
+  50% {
+    background: var(--flame-orange);
+    box-shadow:
+      0 0 20px 10px rgba(255, 200, 100, 0.3),
+      0 0 40px 15px rgba(248, 233, 209, 0.2);
+    transform: translateX(-50%) translateY(-10px) scale(0.3);
+    opacity: 0.7;
+  }
+}
+
+@keyframes candleIn {
+  0% {
+    transform: translateX(-50%) translateY(-200px);
+    opacity: 0;
+  }
+  70% {
+    transform: translateX(-50%) translateY(5px);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+}
+
+/* ============================================
+           TEXTE - MOBILE FIRST
+           ============================================ */
+.text {
+  margin-top: 15px;
+  text-align: center;
+  perspective: 1000px;
+  width: 100%;
+  padding: 0 10px;
+}
+
+.message {
+  font-family: "Dancing Script", cursive;
+  font-size: 2rem;
+  color: var(--text-red);
+  text-shadow:
+    2px 2px 0 #c0392b,
+    4px 4px 10px rgba(0, 0, 0, 0.2);
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+
+.letter {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(30px) rotateX(-90deg);
+  animation: letterPop 0.5s ease-out forwards;
+  animation-play-state: paused;
+}
+
+.letter.space {
+  width: 8px;
+}
+
+.letter:nth-child(1) {
+  animation-delay: 7s;
+}
+.letter:nth-child(2) {
+  animation-delay: 7.1s;
+}
+.letter:nth-child(3) {
+  animation-delay: 7.2s;
+}
+.letter:nth-child(4) {
+  animation-delay: 7.3s;
+}
+.letter:nth-child(5) {
+  animation-delay: 7.4s;
+}
+.letter:nth-child(6) {
+  animation-delay: 7.5s;
+}
+.letter:nth-child(7) {
+  animation-delay: 7.6s;
+}
+.letter:nth-child(8) {
+  animation-delay: 7.7s;
+}
+.letter:nth-child(9) {
+  animation-delay: 7.8s;
+}
+.letter:nth-child(10) {
+  animation-delay: 7.9s;
+}
+.letter:nth-child(11) {
+  animation-delay: 8s;
+}
+.letter:nth-child(12) {
+  animation-delay: 8.1s;
+}
+.letter:nth-child(13) {
+  animation-delay: 8.2s;
+}
+.letter:nth-child(14) {
+  animation-delay: 8.3s;
+}
+
+.letter.animate {
+  animation-play-state: running;
+}
+
+@keyframes letterPop {
+  0% {
+    opacity: 0;
+    transform: translateY(30px) rotateX(-90deg) scale(0.5);
+  }
+  50% {
+    transform: translateY(-5px) rotateX(10deg) scale(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) rotateX(0) scale(1);
+  }
+}
+
+.subtitle {
+  font-family: "Dancing Script", cursive;
+  font-size: 1.5rem;
+  color: var(--heart-red);
+  opacity: 0;
+  transform: scale(0.5);
+  animation: subtitlePop 0.8s ease-out 8.5s forwards;
+  text-shadow: 1px 1px 8px rgba(233, 30, 99, 0.3);
+}
+
+@keyframes subtitlePop {
+  0% {
+    opacity: 0;
+    transform: scale(0.5) rotate(-5deg);
+  }
+  50% {
+    transform: scale(1.1) rotate(3deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+  }
+}
+
+.wish {
+  font-size: 0.9rem;
+  color: var(--text-gold);
+  margin-top: 12px;
+  opacity: 0;
+  animation: wishFade 1s ease-out 9.2s forwards;
+}
+
+@keyframes wishFade {
+  0% {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.wish.visible {
+  animation: wishPulse 2s ease-in-out infinite;
+}
+
+@keyframes wishPulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+/* ============================================
+           BOUTON REJOUER - MOBILE FIRST
+           ============================================ */
+.restart-btn {
+  margin-top: 20px;
+  padding: 12px 24px;
+  font-size: 0.95rem;
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  background: linear-gradient(
+    135deg,
+    var(--text-red) 0%,
+    var(--heart-red) 100%
+  );
+  color: white;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: buttonAppear 0.6s ease-out 10s forwards;
+  box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+  transition: all 0.3s ease;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  min-height: 48px;
+  min-width: 180px;
+}
+
+.restart-btn:active {
+  transform: translateY(0) scale(0.95);
+  box-shadow: 0 3px 10px rgba(231, 76, 60, 0.4);
+}
+
+@keyframes buttonAppear {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================
+           ÉTOILES DÉCORATIVES - MOBILE FIRST
+           ============================================ */
+.container::before,
+.container::after {
+  content: "✨";
+  position: fixed;
+  font-size: 1.2rem;
+  animation: starFloat 3s ease-in-out infinite;
+  opacity: 0;
+}
+
+.container::before {
+  top: 5%;
+  left: 5%;
+  animation-delay: 8s;
+}
+
+.container::after {
+  top: 8%;
+  right: 5%;
+  animation-delay: 8.5s;
+}
+
+@keyframes starFloat {
+  0%,
+  100% {
+    opacity: 0.7;
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-15px) rotate(180deg);
+  }
+}
+
+/* ============================================
+           INTERACTION : SOUFFLER LA BOUGIE
+           ============================================ */
+.candle.blown .fire {
+  animation: none !important;
+  opacity: 0 !important;
+  transition: opacity 0.3s ease;
+}
+
+.candle.blown::after {
+  content: "💨";
+  position: absolute;
+  top: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.2rem;
+  animation: smokeRise 1s ease-out forwards;
+}
+
+@keyframes smokeRise {
+  0% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-25px);
+  }
+}
+
+/* ============================================
+           CONFETTIS KEYFRAME
+           ============================================ */
+@keyframes confettiFall {
+  0% {
+    transform: translateY(-10px) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(110vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+.animation-complete .wish {
+  animation: wishPulse 2s ease-in-out infinite;
+}
+
+/* ============================================
+           RESPONSIVE - TABLETTES (min-width: 480px)
+           ============================================ */
+@media (min-width: 480px) {
+  :root {
+    --cake-width: 160px;
+    --candle-top: 287px;
+    --candle-width: 9px;
+    --candle-height: 45px;
+    --flame-width: 7px;
+    --flame-height: 16px;
+    --flame-top: -20px;
+  }
+
+  .container {
+    padding: 20px;
+  }
+
+  .message {
+    font-size: 2.5rem;
+  }
+
+  .letter.space {
+    width: 10px;
+  }
+
+  .subtitle {
+    font-size: 1.8rem;
+  }
+
+  .wish {
+    font-size: 1rem;
+  }
+
+  .restart-btn {
+    padding: 14px 28px;
+    font-size: 1rem;
+  }
+
+  .container::before,
+  .container::after {
+    font-size: 1.5rem;
+  }
+
+  #cake {
+    filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.2));
+  }
+}
+
+/* ============================================
+           RESPONSIVE - PETITS LAPTOPS (min-width: 768px)
+           ============================================ */
+@media (min-width: 768px) {
+  :root {
+    --cake-width: 180px;
+    --candle-top: 322px;
+    --candle-width: 10px;
+    --candle-height: 55px;
+    --flame-width: 8px;
+    --flame-height: 18px;
+    --flame-top: -22px;
+  }
+
+  body {
+    padding: 20px;
+  }
+
+  .message {
+    font-size: 3.2rem;
+    text-shadow:
+      3px 3px 0 #c0392b,
+      5px 5px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  .letter.space {
+    width: 12px;
+  }
+
+  .subtitle {
+    font-size: 2.2rem;
+  }
+
+  .wish {
+    font-size: 1.1rem;
+    margin-top: 15px;
+  }
+
+  .restart-btn {
+    padding: 15px 32px;
+    font-size: 1.05rem;
+    min-width: 200px;
+  }
+
+  .restart-btn:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 10px 30px rgba(231, 76, 60, 0.5);
+  }
+
+  .container::before,
+  .container::after {
+    font-size: 1.8rem;
+  }
+
+  .container::before {
+    top: 10%;
+    left: 8%;
+  }
+
+  .container::after {
+    top: 12%;
+    right: 8%;
+  }
+}
+
+/* ============================================
+           RESPONSIVE - DESKTOP (min-width: 1024px)
+           ============================================ */
+@media (min-width: 1024px) {
+  :root {
+    --cake-width: 200px;
+    --candle-top: 340px;
+    --candle-width: 12px;
+    --candle-height: 70px;
+    --flame-width: 10px;
+    --flame-height: 22px;
+    --flame-top: -25px;
+  }
+
+  .message {
+    font-size: 4rem;
+    text-shadow:
+      3px 3px 0 #c0392b,
+      6px 6px 15px rgba(0, 0, 0, 0.2);
+  }
+
+  .letter.space {
+    width: 15px;
+  }
+
+  .subtitle {
+    font-size: 2.8rem;
+  }
+
+  .wish {
+    font-size: 1.3rem;
+  }
+
+  .restart-btn {
+    padding: 15px 35px;
+    font-size: 1.1rem;
+    box-shadow: 0 8px 25px rgba(231, 76, 60, 0.4);
+  }
+
+  .restart-btn:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 12px 35px rgba(231, 76, 60, 0.5);
+  }
+
+  #cake {
+    filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.2));
+  }
+
+  .container::before,
+  .container::after {
+    font-size: 2rem;
+  }
+
+  .container::before {
+    top: 10%;
+    left: 10%;
+  }
+
+  .container::after {
+    top: 15%;
+    right: 10%;
+  }
+}
+
+/* ============================================
+           RESPONSIVE - GRANDS ÉCRANS (min-width: 1440px)
+           ============================================ */
+@media (min-width: 1440px) {
+  :root {
+    --cake-width: 250px;
+    --candle-top: 430px;
+    --candle-width: 14px;
+    --candle-height: 85px;
+    --flame-width: 12px;
+    --flame-height: 26px;
+    --flame-top: -28px;
+  }
+
+  .message {
+    font-size: 5rem;
+  }
+
+  .subtitle {
+    font-size: 3.5rem;
+  }
+
+  .wish {
+    font-size: 1.5rem;
+  }
+}
+
+/* ============================================
+           ORIENTATION PAYSAGE SUR MOBILE
+           ============================================ */
+@media (max-height: 500px) and (orientation: landscape) {
+  .container {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+  }
+
+  .cake-wrapper {
+    flex: 0 0 auto;
+  }
+
+  .text {
+    flex: 1;
+    margin-top: 0;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  :root {
+    --cake-width: 100px;
+    --candle-top: 178px;
+    --candle-width: 6px;
+    --candle-height: 30px;
+  }
+
+  .message {
+    font-size: 1.8rem;
+  }
+
+  .subtitle {
+    font-size: 1.3rem;
+  }
+
+  .wish {
+    font-size: 0.85rem;
+  }
+
+  .restart-btn {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    padding: 8px 16px;
+    font-size: 0.85rem;
+    min-height: 40px;
+    min-width: auto;
+  }
+}
+
+/* ============================================
+           PRÉFÉRENCE: RÉDUCTION DES ANIMATIONS
+           ============================================ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  body {
+    animation: none;
+    background-position: 0% 50%;
+  }
+}
+
+/* ============================================
+           MODE SOMBRE (si supporté)
+           ============================================ */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-pink: #8b4557;
+    --bg-pink-dark: #6b3344;
+  }
+}
